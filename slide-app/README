@@ -1,4 +1,8 @@
-This is your new Play 2.0 application
+Slideshow app usage
 =====================================
 
-This file will be packaged with your application, when using `play dist`.
+Add page: curl --request POST --header "Content-type: application/json" http://localhost:9000/pages/add --data '{"name":"DN","duration":15,"url":"http://www.dn.se"}'
+Remove page: curl --request POST --header "Content-type: application/json" http://localhost:9000/pages/remove/<page name>
+List pages: curl --request GET http://localhost:9000/pages
+Slideshow: http://localhost:9000/
+
