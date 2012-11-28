@@ -1,9 +1,7 @@
 package controllers;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import models.Page;
+import models.PageStorage;
 
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
@@ -17,7 +15,7 @@ import views.html.index;
 
 public class Application extends Controller {
 
-    private static final List<Page> pages = new ArrayList<Page>();
+    private static final PageStorage pgStorage = PageStorage.getInstance();
 
     public static Result index() {
         return ok(index.render());
@@ -27,10 +25,11 @@ public class Application extends Controller {
         JsonFactory factory = new JsonFactory();
         ObjectMapper om = new ObjectMapper(factory);
         ArrayNode pageArray = om.createArrayNode();
-        for (Page page : pages) {
+        for (Page page : pgStorage.getPages()) {
             pageArray.add(page.toObjectNode());
         }
         return ok(pageArray);
+
     }
 
     public static Result addPage() {
@@ -39,13 +38,13 @@ public class Application extends Controller {
         Page page = Page.fromJson(json);
         if (page.validate()) {
             boolean found = false;
-            for (Page saved : pages) {
+            for (Page saved : pgStorage.getPages()) {
                 if (saved.getName().equals(page.getName())) {
                     found = true;
                 }
             }
-            if (found) {
-                pages.add(page);
+            if (!found) {
+                pgStorage.addPage(page);
                 return ok();
             } else {
                 return badRequest("Page with name '" + page.getName()
@@ -57,12 +56,8 @@ public class Application extends Controller {
         }
     }
 
-    public static synchronized Result removePage(String name) {
-        for (Page saved : pages) {
-            if (saved.getName().equals(name)) {
-                pages.remove(saved);
-            }
-        }
+    public static Result removePage(String name) {
+        pgStorage.removePage(name);
         return ok();
     }
 }

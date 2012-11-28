@@ -51,15 +51,10 @@ public class ApplicationTest {
 
     @Test
     public void testRemovePage() {
-        running(fakeApplication(), new Runnable() {
-            @Override
-            public void run() {
-                addPage(page);
-                Application.removePage(page.getName());
-                Result pages = callAction(controllers.routes.ref.Application.getPages());
-                Assert.assertTrue(contentAsString(pages).equals("[]"));
-            }
-        });
+        addPage(page);
+        Application.removePage(page.getName());
+        Result pages = callAction(controllers.routes.ref.Application.getPages());
+        Assert.assertTrue(contentAsString(pages).contains("[]"));
     }
 
     private Result addPage(Page pageToAdd) {
