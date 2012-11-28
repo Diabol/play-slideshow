@@ -174,8 +174,10 @@
 		
 		function startSlideshow(pages) {
 			if(pages.length === 0) {
-				$('#info').html('No pages configured!');
+				$('#info').html('No pages configured! Retrying every 15s.');
+				setTimeout("LoadTrigger()", 15000);
 			} else {
+				$('#info').html('');
 				console.log(pages.length);
 				initPagesArray(pages);
 				menu = document.getElementById('menu');

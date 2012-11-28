@@ -1,0 +1,19 @@
+logs
+project/project
+project/target
+conf/evolutions
+target
+.target
+.classpath
+.project
+.settings
+.pmd
+tmp
+.history
+dist
+*.class
+.idea*
+# Package Files #
+*.war
+*.ear
+.cache
