@@ -28,16 +28,7 @@ public class PageStorage {
     }
 
     public synchronized void addPage(Page page) {
-        boolean found = false;
-        for (Page saved : pages) {
-            if (saved.getName().equals(page.getName())) {
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            pages.add(page);
-        }
+        pages.add(page);
     }
 
     public synchronized void removePage(String name) {
