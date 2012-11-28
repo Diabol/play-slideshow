@@ -42,7 +42,7 @@ public class ApplicationTest {
             @Override
             public void run() {
                 addPage(page);
-                Result badRequest = addPage(new Page(15, page.name, "someurl"));
+                Result badRequest = addPage(new Page(15, page.getName(), "someurl"));
                 assertThat(status(badRequest)).isEqualTo(BAD_REQUEST);
             }
 
@@ -55,7 +55,7 @@ public class ApplicationTest {
             @Override
             public void run() {
                 addPage(page);
-                Application.removePage(page.name);
+                Application.removePage(page.getName());
                 Result pages = callAction(controllers.routes.ref.Application.getPages());
                 Assert.assertTrue(contentAsString(pages).equals("[]"));
             }

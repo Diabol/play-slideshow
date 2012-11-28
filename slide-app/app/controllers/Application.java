@@ -1,5 +1,6 @@
 package controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import models.Page;
@@ -8,9 +9,7 @@ import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.ObjectNode;
 
-import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Http.RequestBody;
 import play.mvc.Result;
@@ -18,21 +17,18 @@ import views.html.index;
 
 public class Application extends Controller {
 
+    private static final List<Page> pages = new ArrayList<Page>();
+
     public static Result index() {
         return ok(index.render());
     }
 
     public static Result getPages() {
-        List<Page> pages = Page.find.all();
         JsonFactory factory = new JsonFactory();
         ObjectMapper om = new ObjectMapper(factory);
         ArrayNode pageArray = om.createArrayNode();
         for (Page page : pages) {
-            ObjectNode pageAsJson = Json.newObject();
-            pageAsJson.put("name", page.name);
-            pageAsJson.put("duration", page.duration);
-            pageAsJson.put("url", page.url);
-            pageArray.add(pageAsJson);
+            pageArray.add(page.toObjectNode());
         }
         return ok(pageArray);
     }
@@ -42,14 +38,19 @@ public class Application extends Controller {
         JsonNode json = body.asJson();
         Page page = Page.fromJson(json);
         if (page.validate()) {
-            List<Page> pages = Page.find.where().eq("name", page.name).findList();
-            if (pages.size() == 0) {
-                page.save();
+            boolean found = false;
+            for (Page saved : pages) {
+                if (saved.getName().equals(page.getName())) {
+                    found = true;
+                }
+            }
+            if (found) {
+                pages.add(page);
                 return ok();
             } else {
-                return badRequest("Page with name '" + page.name
+                return badRequest("Page with name '" + page.getName()
                         + "' already added! Remove with POST to http://host:port/pages/"
-                        + page.name + "/remove");
+                        + page.getName() + "/remove");
             }
         } else {
             return badRequest("Can't create Page from " + json.asText());
@@ -57,9 +58,10 @@ public class Application extends Controller {
     }
 
     public static synchronized Result removePage(String name) {
-        List<Page> foundPages = Page.find.where().eq("name", name).findList();
-        for (Page found : foundPages) {
-            found.delete();
+        for (Page saved : pages) {
+            if (saved.getName().equals(name)) {
+                pages.remove(saved);
+            }
         }
         return ok();
     }

@@ -1,36 +1,38 @@
 package models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 
-import play.data.validation.Constraints;
-import play.db.ebean.Model;
 import play.libs.Json;
 
-@Entity
-public class Page extends Model {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long pageId;
-    @Constraints.Required
-    public int duration;
-    @Constraints.Required
-    public String name;
-    @Constraints.Required
-    public String url;
+public class Page {
+    private int duration;
+    private String name;
+    private String url;
 
-    @OneToOne
-    @JoinColumn(name = "vc_id", nullable = false)
-    public Page vcInfo;
+    public int getDuration() {
+        return duration;
+    }
 
-    public static Finder<Long, Page> find = new Finder<Long, Page>(Long.class, Page.class);
+    public String getName() {
+        return name;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
     public Page(int duration, String name, String url) {
         super();
